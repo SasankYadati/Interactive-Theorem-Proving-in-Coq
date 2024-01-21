@@ -121,10 +121,24 @@ Proof. reflexivity. Qed.
 Example normalize_zeros2: normalize (B1 (B0 (B0 (B0 Z)))) = B1 Z.
 Proof. reflexivity. Qed.
 
+Lemma m2: forall a, 
+    nat_to_bin (a + a) = 
+    double_bin (nat_to_bin a).
+Proof.
+    induction a.
+    - reflexivity.
+    - simpl. rewrite -> double_incr_bin. f_equal. rewrite <- IHa. rewrite <- plus_n_Sm. simpl. reflexivity.
+Qed.
+
 Lemma m1: forall b, 
-    nat_to_bin (bin_to_nat b + bin_to_nat b) = 
+    nat_to_bin ((bin_to_nat b) + (bin_to_nat b)) = 
     double_bin (nat_to_bin (bin_to_nat b)).
-Proof. Admitted.
+Proof.
+    destruct b.
+    - reflexivity.
+    - rewrite m2. reflexivity.
+    - rewrite m2. reflexivity.
+Qed.
 
 Theorem bin_nat_bin: forall b,
     nat_to_bin (bin_to_nat b) = normalize b.
