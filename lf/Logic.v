@@ -1695,8 +1695,17 @@ end.
 Theorem forallb_true_iff : forall X test (l : list X),
   forallb test l = true <-> All (fun x => test x = true) l.
 Proof.
-  (* FILL IN HERE *) Admitted.
-
+  intros X f. induction l.
+	- 	split. 
+			+ intros. simpl. reflexivity.
+			+ intros. simpl. reflexivity.
+	-		split.
+			+ intros. simpl. simpl in H. Search andb. rewrite andb_true_iff in H.
+					destruct H as [H1 H2]. split. auto. apply IHl. auto.
+			+	intros. simpl. simpl in H. rewrite andb_true_iff. destruct H as [H1 H2].
+					split. auto. apply IHl. auto.
+Qed.
+ 
 (** (Ungraded thought question) Are there any important properties of
     the function [forallb] which are not captured by this
     specification? *)
@@ -1836,7 +1845,8 @@ Qed.
 Theorem excluded_middle_irrefutable: forall (P : Prop),
   ~ ~ (P \/ ~ P).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  unfold not. intros. apply H. right. intros. apply H. left. auto.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced (not_exists_dist)
@@ -1857,7 +1867,15 @@ Theorem not_exists_dist :
   forall (X:Type) (P : X -> Prop),
     ~ (exists x, ~ P x) -> (forall x, P x).
 Proof.
-  (* FILL IN HERE *) Admitted.
+  intros. unfold excluded_middle in H. specialize H with (P:=P x) as H1.
+	destruct H1 as [H1 | H1]. 
+	-		auto.
+	-		assert (exists x:X, ~ P x) as H2.
+			{
+					exists x. auto.
+			}
+			apply H0 in H2. contradiction.
+Qed.
 (** [] *)
 
 (** **** Exercise: 5 stars, standard, optional (classical_axioms)
