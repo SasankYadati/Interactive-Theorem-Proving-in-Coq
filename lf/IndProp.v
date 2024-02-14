@@ -282,7 +282,10 @@ Qed.
 Theorem ev_double : forall n,
   ev (double n).
 Proof.
-  (* FILL IN HERE *) Admitted.
+		induction n.
+		-		simpl. apply ev_0.
+		-		simpl. apply ev_SS. assumption.
+Qed.
 (** [] *)
 
 (* ################################################################# *)
@@ -402,7 +405,8 @@ Proof.
 Theorem SSSSev__even : forall n,
   ev (S (S (S (S n)))) -> ev n.
 Proof.
-  (* FILL IN HERE *) Admitted.
+		intros n H. inversion H. inversion H1. assumption.
+Qed.
 (** [] *)
 
 (** **** Exercise: 1 star, standard (ev5_nonsense)
@@ -412,7 +416,8 @@ Proof.
 Theorem ev5_nonsense :
   ev 5 -> 2 + 2 = 9.
 Proof.
-  (* FILL IN HERE *) Admitted.
+		intros. inversion H. inversion H1. inversion H3.
+Qed.
 (** [] *)
 
 (** The [inversion] tactic does quite a bit of work. For
@@ -576,7 +581,10 @@ Qed.
 (** **** Exercise: 2 stars, standard (ev_sum) *)
 Theorem ev_sum : forall n m, ev n -> ev m -> ev (n + m).
 Proof.
-  (* FILL IN HERE *) Admitted.
+		intros n m H. induction H.
+		-		simpl. intros. assumption.
+		-		intros. apply IHev in H0. simpl. apply ev_SS. assumption.
+Qed.
 (** [] *)
 
 (** **** Exercise: 4 stars, advanced, optional (ev'_ev)
@@ -598,7 +606,19 @@ Inductive ev' : nat -> Prop :=
 
 Theorem ev'_ev : forall n, ev' n <-> ev n.
 Proof.
- (* FILL IN HERE *) Admitted.
+		intros n. split.
+		-		intros. induction H.
+				+		apply ev_0. 
+				+		apply ev_SS. apply ev_0.
+				+		apply ev_sum. auto. auto.
+		-		intros. induction H.
+				+		apply ev'_0.
+				+		assert (S (S n) = (n + 2)).
+							{
+									rewrite add_comm. simpl. reflexivity.
+							}
+							rewrite H0. apply ev'_sum. auto. apply ev'_2.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, advanced, especially useful (ev_ev__ev) *)
@@ -607,7 +627,10 @@ Theorem ev_ev__ev : forall n m,
   (* Hint: There are two pieces of evidence you could attempt to induct upon
       here. If one doesn't work, try the other. *)
 Proof.
-  (* FILL IN HERE *) Admitted.
+		intros n m Hnm Hn. induction Hn.
+		-		simpl in Hnm. auto.
+		- 	apply IHHn. inversion Hnm. auto.
+Qed.
 (** [] *)
 
 (** **** Exercise: 3 stars, standard, optional (ev_plus_plus)
